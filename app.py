@@ -2,16 +2,13 @@ import streamlit as st
 import yfinance as yf
 import pandas as pd
 
-# הגדרות דף
 st.set_page_config(page_title="Mini Finance Dashboard", page_icon="📊", layout="wide")
 st.title("📊 Mini Finance Dashboard")
 
-# ===== קלט מהמשתמש =====
 ticker = st.text_input("בחר מניה/קריפטו (למשל NVDA, AAPL, TSLA, BTC-USD):", "NVDA")
 period = st.selectbox("בחר תקופה", ["1mo", "3mo", "6mo", "1y", "2y"], index=2)
 col_choice = st.selectbox("בחר עמודה לתצוגה", ["Close", "Adj Close", "Volume"], index=0)
 
-# פונקציה לטעינת נתונים (עם קאש לשיפור מהירות)
 @st.cache_data(ttl=60 * 60)
 def load_data(tkr: str, per: str) -> pd.DataFrame:
     # auto_adjust=False כדי לקבל גם Adj Close
@@ -24,21 +21,17 @@ if ticker:
     if data.empty:
         st.warning("לא נמצאו נתונים לטיקר הזה. נסה טיקר אחר.")
     else:
-        # אם בחרו עמודה שלא קיימת (נדיר) – ניפול ל-Close
         if col_choice not in data.columns:
             st.info(f"'{col_choice}' לא קיים בנתונים. מציג 'Close' במקום.")
             col_choice = "Close"
 
-        # ===== גרף =====
         st.subheader(f"גרף {col_choice} — {ticker}")
         st.line_chart(data[col_choice])
 
-        # ===== סטטיסטיקות =====
         series = data[col_choice].dropna().astype(float)
         first = float(series.iloc[0])
         last = float(series.iloc[-1])
 
-        # תשואה/שינוי באחוזים (גם ל-Volume זו פשוט % שינוי)
         pct_return = (last / first - 1.0) * 100.0
         mean_val = float(series.mean())
         vol_pct = float(series.pct_change().std() * 100.0)  # תנודתיות משוערת
@@ -49,7 +42,6 @@ if ticker:
         c2.metric(f"ממוצע {col_choice}", f"{mean_val:.2f}")
         c3.metric("תנודתיות %", f"{vol_pct:.2f}%")
 
-        # ===== הורדת CSV =====
         st.subheader("⬇️ הורדת נתונים")
         export_df = data.reset_index()  # כדי שה-Date יהיה עמודה בקובץ
         csv_bytes = export_df.to_csv(index=False).encode("utf-8")
