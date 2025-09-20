@@ -1,5 +1,8 @@
 # 📊 finance-analytics-dashboard
-Interactive dashboard for stock &amp; crypto analytics | Python, Pandas, Streamlit
+Interactive dashboard for stock & crypto analytics | Python, Pandas, Streamlit
+
+[![Open in Streamlit](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://mini-finance-dashboard.streamlit.app)
+
 
 # Market Vision
 A beginner-friendly yet professional project combining Data Analysis & Finance.  
